@@ -151,6 +151,14 @@ namespace CalibreTools
                             Directory.Move(sourceFolder, strMoveFolder + parentFolder);
                             item.SubItems[1].Text = newPath;
 
+                            // 判断父目录是否为空
+                            sourceFolder = sourceFolder.Substring(0, sourceFolder.LastIndexOf('/'));
+                            if (Directory.Exists(sourceFolder) &&
+                                (Directory.GetDirectories(sourceFolder).Count() == 0))
+                            {
+                                Directory.Delete(sourceFolder);
+                            }
+
                             // 更改文件名
                             object dataIdx = 0;
                             string dataFormat = null;
