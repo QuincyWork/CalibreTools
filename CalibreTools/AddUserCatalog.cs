@@ -12,8 +12,9 @@ namespace CalibreTools
     public partial class AddUserCatalog : Form
     {
         public string name;
-        public string filter;
+        public string filter = "#catalog";
         public int    index;
+        public bool   filterEnable = true;
 
         public AddUserCatalog()
         {
@@ -47,7 +48,12 @@ namespace CalibreTools
                 DlgCatalogName.Text = name;
             }
 
-            if (!string.IsNullOrEmpty(filter))
+            if (!filterEnable)
+            {
+                DlgCatalogFilter.Enabled = false;
+                DlgCatalogIndex.Enabled = false;
+            }
+            else if (!string.IsNullOrEmpty(filter))
             {
                 DlgCatalogFilter.Text = filter;
                 DlgCatalogIndex.Text = index.ToString();

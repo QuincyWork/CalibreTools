@@ -54,6 +54,12 @@ namespace CalibreTools
                 string sql = "DROP TRIGGER books_update_trg;";
                 SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
                 command.ExecuteNonQuery();
+                buttonRefresh.Enabled = true;
+                buttonMove.Enabled = true;
+                buttonAddCatalog.Enabled = true;
+                buttonEditCatalog.Enabled = true;
+                buttonRefreshCatalog.Enabled = true;
+                buttonImportCatalog.Enabled = true;
             }
             catch (Exception)
             {
@@ -61,7 +67,7 @@ namespace CalibreTools
 
             m_strCalibreRoot = Path.GetDirectoryName(textBoxPath.Text);
 
-            MessageBox.Show("打开操作成功，操作前请先关闭Calibre应用");
+            MessageBox.Show(this,"打开操作成功，操作前请先关闭Calibre应用");
         }
 
         private void buttonClose_Click(object sender, EventArgs e)
@@ -77,6 +83,13 @@ namespace CalibreTools
                     "END";
                     SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
                     command.ExecuteNonQuery();
+
+                    buttonRefresh.Enabled = false;
+                    buttonMove.Enabled = false;
+                    buttonAddCatalog.Enabled = false;
+                    buttonEditCatalog.Enabled = false;
+                    buttonRefreshCatalog.Enabled = false;
+                    buttonImportCatalog.Enabled = false;
                 }
                 catch (Exception)
                 {
@@ -85,7 +98,7 @@ namespace CalibreTools
                 m_dbConnection.Close();
                 m_dbConnection = null;
 
-                MessageBox.Show("关闭操作成功");
+                MessageBox.Show(this,"关闭操作成功");
             }
         }
 
@@ -200,7 +213,7 @@ namespace CalibreTools
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("发生异常，" + ex.Message);
+                        MessageBox.Show(this,"发生异常，" + ex.Message);
                     }
                 }
             }
@@ -268,11 +281,7 @@ namespace CalibreTools
                             {
                                 foreach (CatalogItem leaf in node.Value)
                                 {
-                                    CurrentNode.Nodes.Add(leaf.name + ":" + leaf.value + ":" + leaf.index).Tag =
-                                        new CatalogTreeItemTag
-                                        {
-                                            
-                                        };
+                                    CurrentNode.Nodes.Add(leaf.name + ":" + leaf.value + ":" + leaf.index);
                                 }
                             }                            
                         }
@@ -289,6 +298,12 @@ namespace CalibreTools
             TreeNode SelectedNode = treeViewCatalog.SelectedNode;
             if (SelectedNode != null)
             {
+                if (SelectedNode.Text.Contains(':'))
+                {
+                    MessageBox.Show(this, "带过滤条件的节点不能再添加子节点");
+                    return;
+                }
+
                 AddUserCatalog dlg = new AddUserCatalog();
                 DialogResult result = dlg.ShowDialog(this);
                 if (result == DialogResult.OK)
@@ -313,6 +328,8 @@ namespace CalibreTools
             if (SelectedNode != null)
             {
                 AddUserCatalog dlg = new AddUserCatalog();
+                dlg.filterEnable = (SelectedNode.Nodes.Count == 0);
+
                 string[] values = SelectedNode.Text.Split(':');
                 dlg.name = values[0];
                 if (values.Length == 3)
@@ -346,21 +363,46 @@ namespace CalibreTools
             try
             {
                 UserCatalog config = new UserCatalog();
-                foreach (TreeNode node in treeViewCatalog.Nodes)
+                Queue<TreeNode> nodesList = new Queue<TreeNode>();
+                nodesList.Enqueue(treeViewCatalog.Nodes[0]);
+
+                while (nodesList.Count > 0)
                 {
-                    // 判断节点类型
-                    string strKeyValue = node.Tag as string;
-                    if (node.Text.Contains(':'))
+                    TreeNode currentNode = nodesList.Dequeue();
+                    currentNode.Tag = currentNode.Text;
+                    if (currentNode.Parent != null)
                     {
-                        
+                        currentNode.Tag = currentNode.Parent.Tag as string + "." + currentNode.Text;
                     }
 
-                    if (config.catalogs.ContainsKey(node.Tag as string))
+                    string[] nodeValue = currentNode.Text.Split(':');
+                    if (nodeValue.Length == 3)
                     {
+                        string strKeyValue = currentNode.Parent.Tag as string;
+                        if (!config.catalogs.ContainsKey(strKeyValue))
+                        {
+                            config.catalogs[strKeyValue] = new List<CatalogItem>();
+                        }
 
+                        config.catalogs[strKeyValue].Add(
+                            new CatalogItem
+                            {
+                                name = nodeValue[0],
+                                value = nodeValue[1],
+                                index = Convert.ToInt32(nodeValue[2])
+                            });
+                    }
+                    else
+                    {
+                        config.catalogs.Add(currentNode.Tag as string, new List<CatalogItem>());
+                    }
+
+                    foreach (TreeNode v in currentNode.Nodes)
+                    {
+                        nodesList.Enqueue(v);
                     }
                 }
-
+                
                 StringWriter sw = new StringWriter();
                 JsonWriter writer = new JsonTextWriter(sw);
                 writer.WriteStartObject();
@@ -388,6 +430,7 @@ namespace CalibreTools
                 string strJson = sw.ToString();
                 if (!string.IsNullOrEmpty(strJson))
                 {
+                    strJson = strJson.Replace("\\\\","\\");
                     string sql = "update preferences set val='{0}' where key='user_categories'";
                     SQLiteCommand command = new SQLiteCommand(string.Format(sql, strJson), m_dbConnection);
                     command.ExecuteNonQuery();
@@ -415,7 +458,7 @@ namespace CalibreTools
             for (int i = 0; i < charbuffers.Length; i++)
             {
                 buffer = System.Text.Encoding.Unicode.GetBytes(charbuffers[i].ToString());
-                sb.Append(String.Format(@"\u{0:X2}{1:X2}", buffer[1], buffer[0]));
+                sb.Append(String.Format("\\u{0:X2}{1:X2}", buffer[1], buffer[0]));
             }
             return sb.ToString();
         }

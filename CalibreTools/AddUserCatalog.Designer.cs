@@ -41,24 +41,27 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 16);
+            this.label1.Location = new System.Drawing.Point(26, 32);
+            this.label1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 12);
+            this.label1.Size = new System.Drawing.Size(58, 24);
             this.label1.TabIndex = 0;
             this.label1.Text = "分类";
             // 
             // DlgCatalogName
             // 
-            this.DlgCatalogName.Location = new System.Drawing.Point(70, 12);
+            this.DlgCatalogName.Location = new System.Drawing.Point(140, 24);
+            this.DlgCatalogName.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.DlgCatalogName.Name = "DlgCatalogName";
-            this.DlgCatalogName.Size = new System.Drawing.Size(202, 21);
+            this.DlgCatalogName.Size = new System.Drawing.Size(400, 35);
             this.DlgCatalogName.TabIndex = 1;
             // 
             // DlgCatalogOK
             // 
-            this.DlgCatalogOK.Location = new System.Drawing.Point(117, 98);
+            this.DlgCatalogOK.Location = new System.Drawing.Point(234, 196);
+            this.DlgCatalogOK.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.DlgCatalogOK.Name = "DlgCatalogOK";
-            this.DlgCatalogOK.Size = new System.Drawing.Size(75, 23);
+            this.DlgCatalogOK.Size = new System.Drawing.Size(150, 46);
             this.DlgCatalogOK.TabIndex = 2;
             this.DlgCatalogOK.Text = "确定";
             this.DlgCatalogOK.UseVisualStyleBackColor = true;
@@ -67,9 +70,10 @@
             // DlgCatalogCancel
             // 
             this.DlgCatalogCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.DlgCatalogCancel.Location = new System.Drawing.Point(198, 98);
+            this.DlgCatalogCancel.Location = new System.Drawing.Point(396, 196);
+            this.DlgCatalogCancel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.DlgCatalogCancel.Name = "DlgCatalogCancel";
-            this.DlgCatalogCancel.Size = new System.Drawing.Size(75, 23);
+            this.DlgCatalogCancel.Size = new System.Drawing.Size(150, 46);
             this.DlgCatalogCancel.TabIndex = 2;
             this.DlgCatalogCancel.Text = "取消";
             this.DlgCatalogCancel.UseVisualStyleBackColor = true;
@@ -78,43 +82,46 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 43);
+            this.label2.Location = new System.Drawing.Point(26, 86);
+            this.label2.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(41, 12);
+            this.label2.Size = new System.Drawing.Size(82, 24);
             this.label2.TabIndex = 0;
             this.label2.Text = "过滤器";
             // 
             // DlgCatalogFilter
             // 
-            this.DlgCatalogFilter.Location = new System.Drawing.Point(70, 39);
+            this.DlgCatalogFilter.Location = new System.Drawing.Point(140, 78);
+            this.DlgCatalogFilter.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.DlgCatalogFilter.Name = "DlgCatalogFilter";
-            this.DlgCatalogFilter.Size = new System.Drawing.Size(202, 21);
+            this.DlgCatalogFilter.Size = new System.Drawing.Size(400, 35);
             this.DlgCatalogFilter.TabIndex = 1;
-            this.DlgCatalogFilter.Text = "#catalog";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(13, 70);
+            this.label3.Location = new System.Drawing.Point(26, 140);
+            this.label3.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(41, 12);
+            this.label3.Size = new System.Drawing.Size(82, 24);
             this.label3.TabIndex = 0;
             this.label3.Text = "索引值";
             // 
             // DlgCatalogIndex
             // 
-            this.DlgCatalogIndex.Location = new System.Drawing.Point(70, 66);
+            this.DlgCatalogIndex.Location = new System.Drawing.Point(140, 132);
+            this.DlgCatalogIndex.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.DlgCatalogIndex.Name = "DlgCatalogIndex";
-            this.DlgCatalogIndex.Size = new System.Drawing.Size(202, 21);
+            this.DlgCatalogIndex.Size = new System.Drawing.Size(400, 35);
             this.DlgCatalogIndex.TabIndex = 1;
             // 
             // AddUserCatalog
             // 
             this.AcceptButton = this.DlgCatalogOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.DlgCatalogCancel;
-            this.ClientSize = new System.Drawing.Size(284, 131);
+            this.ClientSize = new System.Drawing.Size(568, 262);
             this.Controls.Add(this.DlgCatalogCancel);
             this.Controls.Add(this.DlgCatalogOK);
             this.Controls.Add(this.DlgCatalogIndex);
@@ -124,6 +131,7 @@
             this.Controls.Add(this.DlgCatalogName);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.Name = "AddUserCatalog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "添加用户目录";
