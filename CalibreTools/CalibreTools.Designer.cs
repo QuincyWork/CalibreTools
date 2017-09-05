@@ -36,6 +36,11 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.buttonImportCatalog = new System.Windows.Forms.Button();
+            this.buttonRefreshCatalog = new System.Windows.Forms.Button();
+            this.buttonAddCatalog = new System.Windows.Forms.Button();
+            this.treeViewCatalog = new System.Windows.Forms.TreeView();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxPath = new System.Windows.Forms.TextBox();
             this.buttonOpen = new System.Windows.Forms.Button();
@@ -43,9 +48,10 @@
             this.openFileDialogLib = new System.Windows.Forms.OpenFileDialog();
             this.buttonBrowse = new System.Windows.Forms.Button();
             this.folderBrowserDialogLib = new System.Windows.Forms.FolderBrowserDialog();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.buttonEditCatalog = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -102,7 +108,7 @@
             this.listViewBooks.FullRowSelect = true;
             this.listViewBooks.Location = new System.Drawing.Point(3, 3);
             this.listViewBooks.Name = "listViewBooks";
-            this.listViewBooks.Size = new System.Drawing.Size(472, 350);
+            this.listViewBooks.Size = new System.Drawing.Size(531, 350);
             this.listViewBooks.TabIndex = 0;
             this.listViewBooks.UseCompatibleStateImageBehavior = false;
             this.listViewBooks.View = System.Windows.Forms.View.Details;
@@ -115,17 +121,70 @@
             // columnHeader2
             // 
             this.columnHeader2.Text = "路径";
-            this.columnHeader2.Width = 297;
+            this.columnHeader2.Width = 359;
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.buttonImportCatalog);
+            this.tabPage2.Controls.Add(this.buttonRefreshCatalog);
+            this.tabPage2.Controls.Add(this.buttonEditCatalog);
+            this.tabPage2.Controls.Add(this.buttonAddCatalog);
+            this.tabPage2.Controls.Add(this.treeViewCatalog);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(638, 356);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "文档目录";
+            this.tabPage2.Text = "用户目录";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // buttonImportCatalog
+            // 
+            this.buttonImportCatalog.Location = new System.Drawing.Point(555, 106);
+            this.buttonImportCatalog.Name = "buttonImportCatalog";
+            this.buttonImportCatalog.Size = new System.Drawing.Size(75, 23);
+            this.buttonImportCatalog.TabIndex = 1;
+            this.buttonImportCatalog.Text = "导入";
+            this.buttonImportCatalog.UseVisualStyleBackColor = true;
+            this.buttonImportCatalog.Click += new System.EventHandler(this.buttonImportCatalog_Click);
+            // 
+            // buttonRefreshCatalog
+            // 
+            this.buttonRefreshCatalog.Location = new System.Drawing.Point(555, 19);
+            this.buttonRefreshCatalog.Name = "buttonRefreshCatalog";
+            this.buttonRefreshCatalog.Size = new System.Drawing.Size(75, 23);
+            this.buttonRefreshCatalog.TabIndex = 1;
+            this.buttonRefreshCatalog.Text = "刷新";
+            this.buttonRefreshCatalog.UseVisualStyleBackColor = true;
+            this.buttonRefreshCatalog.Click += new System.EventHandler(this.buttonRefreshCatalog_Click);
+            // 
+            // buttonAddCatalog
+            // 
+            this.buttonAddCatalog.Location = new System.Drawing.Point(555, 48);
+            this.buttonAddCatalog.Name = "buttonAddCatalog";
+            this.buttonAddCatalog.Size = new System.Drawing.Size(75, 23);
+            this.buttonAddCatalog.TabIndex = 1;
+            this.buttonAddCatalog.Text = "添加子分类";
+            this.buttonAddCatalog.UseVisualStyleBackColor = true;
+            this.buttonAddCatalog.Click += new System.EventHandler(this.buttonAddCatalog_Click);
+            // 
+            // treeViewCatalog
+            // 
+            this.treeViewCatalog.Dock = System.Windows.Forms.DockStyle.Left;
+            this.treeViewCatalog.Location = new System.Drawing.Point(3, 3);
+            this.treeViewCatalog.Name = "treeViewCatalog";
+            this.treeViewCatalog.Size = new System.Drawing.Size(532, 350);
+            this.treeViewCatalog.TabIndex = 0;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(638, 356);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "下载";
+            this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
@@ -138,9 +197,9 @@
             // 
             // textBoxPath
             // 
-            this.textBoxPath.Location = new System.Drawing.Point(61, 386);
+            this.textBoxPath.Location = new System.Drawing.Point(60, 386);
             this.textBoxPath.Name = "textBoxPath";
-            this.textBoxPath.Size = new System.Drawing.Size(388, 21);
+            this.textBoxPath.Size = new System.Drawing.Size(449, 21);
             this.textBoxPath.TabIndex = 2;
             // 
             // buttonOpen
@@ -169,7 +228,7 @@
             // 
             // buttonBrowse
             // 
-            this.buttonBrowse.Location = new System.Drawing.Point(449, 385);
+            this.buttonBrowse.Location = new System.Drawing.Point(509, 385);
             this.buttonBrowse.Name = "buttonBrowse";
             this.buttonBrowse.Size = new System.Drawing.Size(30, 23);
             this.buttonBrowse.TabIndex = 4;
@@ -177,15 +236,15 @@
             this.buttonBrowse.UseVisualStyleBackColor = true;
             this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
             // 
-            // tabPage3
+            // buttonEditCatalog
             // 
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(638, 356);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "下载";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.buttonEditCatalog.Location = new System.Drawing.Point(555, 77);
+            this.buttonEditCatalog.Name = "buttonEditCatalog";
+            this.buttonEditCatalog.Size = new System.Drawing.Size(75, 23);
+            this.buttonEditCatalog.TabIndex = 1;
+            this.buttonEditCatalog.Text = "修改分类";
+            this.buttonEditCatalog.UseVisualStyleBackColor = true;
+            this.buttonEditCatalog.Click += new System.EventHandler(this.buttonEditCatalog_Click);
             // 
             // CalibreTools
             // 
@@ -204,6 +263,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CalibreTools_FormClosing);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -227,6 +287,11 @@
         private System.Windows.Forms.Button buttonBrowse;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogLib;
         private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TreeView treeViewCatalog;
+        private System.Windows.Forms.Button buttonImportCatalog;
+        private System.Windows.Forms.Button buttonAddCatalog;
+        private System.Windows.Forms.Button buttonRefreshCatalog;
+        private System.Windows.Forms.Button buttonEditCatalog;
     }
 }
 
