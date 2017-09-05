@@ -10,6 +10,9 @@ using System.Data.SQLite;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Net;
+using HtmlAgilityPack;
+using System.Threading;
 
 namespace CalibreTools
 {
@@ -443,6 +446,68 @@ namespace CalibreTools
 
         #endregion
 
+        #region 下载文章
+
+        private void buttonReview_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Encoding encode = Encoding.GetEncoding(comboBoxCodec.Text);
+                FileStream fileSteam = new FileStream(textBoxSavePath.Text, FileMode.CreateNew);
+                StreamWriter sw = new StreamWriter(fileSteam, encode);
+
+                string urlBase = textBoxBase.Text;
+                string urlChapter = urlBase + textBoxChapter.Text;
+                string webIndex = GetHttpWebRequest(urlChapter, encode);
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(webIndex);
+
+                HtmlNodeCollection ElementCollection = doc.DocumentNode.SelectNodes(textBoxTocXPath.Text);
+                foreach (HtmlNode item in ElementCollection)
+                {
+                    sw.WriteLine(item.InnerText);
+                    string chapterRef = item.Attributes["href"].Value;
+                    int downloaCount = 5;
+                    string chapterContext = "";
+                    do
+                    {
+                        try
+                        {
+                            Thread.Sleep(200);
+                            chapterContext = GetHttpWebRequest(urlBase + chapterRef, encode);
+                            HtmlAgilityPack.HtmlDocument chapterDoc = new HtmlAgilityPack.HtmlDocument();
+                            chapterDoc.LoadHtml(chapterContext);
+
+                            HtmlNode ChapElement = chapterDoc.DocumentNode.SelectSingleNode(textBoxChapterXPath.Text);
+                            if (ChapElement != null)
+                            {
+                                sw.WriteLine(ChapElement.InnerText);
+                                sw.WriteLine();
+                            }
+
+                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(this, "发生异常：" + ex.Message);
+                        }
+                    } while (downloaCount-- > 0);
+                }
+
+                sw.Close();
+            }
+            catch (Exception ex)
+            {
+                textBoxChapter.Text = ex.Message;
+            }
+        }
+
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        #endregion
 
         #region 辅助函数
         /// <summary>    
@@ -483,6 +548,30 @@ namespace CalibreTools
                 dst += Encoding.Unicode.GetString(bytes);
             }
             return dst;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        private string GetHttpWebRequest(string url, Encoding encoding)
+        {
+            Uri uri = new Uri(url);
+            HttpWebRequest myReq = (HttpWebRequest)WebRequest.Create(uri);
+            myReq.UserAgent = "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705";
+            myReq.Accept = "*/*";
+            myReq.KeepAlive = true;
+            myReq.Headers.Add("Accept-Language", "zh-cn,en-us;q=0.5");
+            HttpWebResponse result = (HttpWebResponse)myReq.GetResponse();
+            Stream receviceStream = result.GetResponseStream();
+            StreamReader readerOfStream = new StreamReader(receviceStream, encoding);
+            string strHTML = readerOfStream.ReadToEnd();
+            readerOfStream.Close();
+            receviceStream.Close();
+            result.Close();
+            return strHTML;
         }
 
         #endregion

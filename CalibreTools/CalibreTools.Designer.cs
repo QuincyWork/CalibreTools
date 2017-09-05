@@ -49,9 +49,26 @@
             this.openFileDialogLib = new System.Windows.Forms.OpenFileDialog();
             this.buttonBrowse = new System.Windows.Forms.Button();
             this.folderBrowserDialogLib = new System.Windows.Forms.FolderBrowserDialog();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textBoxBase = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.textBoxTocXPath = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textBoxChapterXPath = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textBoxSavePath = new System.Windows.Forms.TextBox();
+            this.textBoxReview = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.buttonReview = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
+            this.comboBoxCodec = new System.Windows.Forms.ComboBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.textBoxChapter = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -205,6 +222,22 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.comboBoxCodec);
+            this.tabPage3.Controls.Add(this.buttonSave);
+            this.tabPage3.Controls.Add(this.buttonReview);
+            this.tabPage3.Controls.Add(this.textBoxReview);
+            this.tabPage3.Controls.Add(this.textBoxSavePath);
+            this.tabPage3.Controls.Add(this.label6);
+            this.tabPage3.Controls.Add(this.label5);
+            this.tabPage3.Controls.Add(this.textBoxChapterXPath);
+            this.tabPage3.Controls.Add(this.label7);
+            this.tabPage3.Controls.Add(this.label4);
+            this.tabPage3.Controls.Add(this.textBoxTocXPath);
+            this.tabPage3.Controls.Add(this.label3);
+            this.tabPage3.Controls.Add(this.textBoxChapter);
+            this.tabPage3.Controls.Add(this.label8);
+            this.tabPage3.Controls.Add(this.textBoxBase);
+            this.tabPage3.Controls.Add(this.label2);
             this.tabPage3.Location = new System.Drawing.Point(8, 39);
             this.tabPage3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.tabPage3.Name = "tabPage3";
@@ -269,6 +302,143 @@
             this.buttonBrowse.UseVisualStyleBackColor = true;
             this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(25, 20);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(130, 24);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "网站基地址";
+            // 
+            // textBoxBase
+            // 
+            this.textBoxBase.Location = new System.Drawing.Point(173, 17);
+            this.textBoxBase.Name = "textBoxBase";
+            this.textBoxBase.Size = new System.Drawing.Size(897, 35);
+            this.textBoxBase.TabIndex = 1;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(25, 124);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(118, 24);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "目录XPath";
+            // 
+            // textBoxTocXPath
+            // 
+            this.textBoxTocXPath.Location = new System.Drawing.Point(173, 121);
+            this.textBoxTocXPath.Name = "textBoxTocXPath";
+            this.textBoxTocXPath.Size = new System.Drawing.Size(897, 35);
+            this.textBoxTocXPath.TabIndex = 1;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(25, 176);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(118, 24);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "文章XPath";
+            // 
+            // textBoxChapterXPath
+            // 
+            this.textBoxChapterXPath.Location = new System.Drawing.Point(173, 172);
+            this.textBoxChapterXPath.Name = "textBoxChapterXPath";
+            this.textBoxChapterXPath.Size = new System.Drawing.Size(897, 35);
+            this.textBoxChapterXPath.TabIndex = 1;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(25, 280);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(106, 24);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "保存路径";
+            // 
+            // textBoxSavePath
+            // 
+            this.textBoxSavePath.Location = new System.Drawing.Point(173, 274);
+            this.textBoxSavePath.Name = "textBoxSavePath";
+            this.textBoxSavePath.Size = new System.Drawing.Size(897, 35);
+            this.textBoxSavePath.TabIndex = 1;
+            // 
+            // textBoxReview
+            // 
+            this.textBoxReview.Location = new System.Drawing.Point(29, 377);
+            this.textBoxReview.Multiline = true;
+            this.textBoxReview.Name = "textBoxReview";
+            this.textBoxReview.Size = new System.Drawing.Size(1041, 317);
+            this.textBoxReview.TabIndex = 2;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(25, 350);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(106, 24);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "预览结果";
+            // 
+            // buttonReview
+            // 
+            this.buttonReview.Location = new System.Drawing.Point(1110, 37);
+            this.buttonReview.Name = "buttonReview";
+            this.buttonReview.Size = new System.Drawing.Size(150, 46);
+            this.buttonReview.TabIndex = 3;
+            this.buttonReview.Text = "预览";
+            this.buttonReview.UseVisualStyleBackColor = true;
+            this.buttonReview.Click += new System.EventHandler(this.buttonReview_Click);
+            // 
+            // buttonSave
+            // 
+            this.buttonSave.Location = new System.Drawing.Point(1110, 99);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(150, 46);
+            this.buttonSave.TabIndex = 3;
+            this.buttonSave.Text = "保存";
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            // 
+            // comboBoxCodec
+            // 
+            this.comboBoxCodec.FormattingEnabled = true;
+            this.comboBoxCodec.Items.AddRange(new object[] {
+            "utf-8",
+            "GB18030"});
+            this.comboBoxCodec.Location = new System.Drawing.Point(173, 225);
+            this.comboBoxCodec.Name = "comboBoxCodec";
+            this.comboBoxCodec.Size = new System.Drawing.Size(226, 32);
+            this.comboBoxCodec.TabIndex = 4;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(25, 229);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(106, 24);
+            this.label7.TabIndex = 0;
+            this.label7.Text = "文章编码";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(25, 73);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(106, 24);
+            this.label8.TabIndex = 0;
+            this.label8.Text = "文章路径";
+            // 
+            // textBoxChapter
+            // 
+            this.textBoxChapter.Location = new System.Drawing.Point(173, 70);
+            this.textBoxChapter.Name = "textBoxChapter";
+            this.textBoxChapter.Size = new System.Drawing.Size(897, 35);
+            this.textBoxChapter.TabIndex = 1;
+            // 
             // CalibreTools
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 24F);
@@ -288,6 +458,8 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -316,6 +488,22 @@
         private System.Windows.Forms.Button buttonAddCatalog;
         private System.Windows.Forms.Button buttonRefreshCatalog;
         private System.Windows.Forms.Button buttonEditCatalog;
+        private System.Windows.Forms.TextBox textBoxBase;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textBoxChapterXPath;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox textBoxTocXPath;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox textBoxSavePath;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox textBoxReview;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ComboBox comboBoxCodec;
+        private System.Windows.Forms.Button buttonSave;
+        private System.Windows.Forms.Button buttonReview;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBoxChapter;
+        private System.Windows.Forms.Label label8;
     }
 }
 
