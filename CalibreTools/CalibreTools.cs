@@ -13,9 +13,11 @@ using Newtonsoft.Json;
 using System.Net;
 using HtmlAgilityPack;
 using System.Threading;
+using System.Configuration;
 
 namespace CalibreTools
 {
+    public delegate bool DownloadarticleDelegate(bool val);
     public partial class CalibreTools : Form
     {
         private SQLiteConnection m_dbConnection = null;
@@ -29,6 +31,25 @@ namespace CalibreTools
         private void CalibreTools_FormClosing(object sender, FormClosingEventArgs e)
         {
             buttonClose_Click(sender, e);
+        }
+
+        private void CalibreTools_Load(object sender, EventArgs e)
+        {
+            // 加载Download配置
+            textBoxBase.Text = Properties.Settings.Default.baseURL;
+            textBoxChapter.Text = Properties.Settings.Default.catalogRelativeURL;
+            textBoxTocXPath.Text = Properties.Settings.Default.catalogXPath;
+            textBoxChapterXPath.Text = Properties.Settings.Default.articleXPath;
+            textBoxSavePath.Text = Properties.Settings.Default.saveFilePath;
+            string encodeValue = Properties.Settings.Default.articleEncode;
+            if (!string.IsNullOrEmpty(encodeValue))
+            {
+                comboBoxCodec.SelectedText = encodeValue;
+            }
+            else
+            {
+                comboBoxCodec.SelectedIndex = 0;
+            }
         }
 
         #region 库目录
@@ -448,13 +469,18 @@ namespace CalibreTools
 
         #region 下载文章
 
-        private void buttonReview_Click(object sender, EventArgs e)
+        private bool DownloadArticle(bool review)
         {
+            FileStream fileSteam = null;
+            StreamWriter sw = null;
+            bool result = false;
             try
             {
+                textBoxReview.Text = "";
+
                 Encoding encode = Encoding.GetEncoding(comboBoxCodec.Text);
-                FileStream fileSteam = new FileStream(textBoxSavePath.Text, FileMode.CreateNew);
-                StreamWriter sw = new StreamWriter(fileSteam, encode);
+                fileSteam = new FileStream(textBoxSavePath.Text, FileMode.Append);
+                sw = new StreamWriter(fileSteam, encode);
 
                 string urlBase = textBoxBase.Text;
                 string urlChapter = urlBase + textBoxChapter.Text;
@@ -463,48 +489,108 @@ namespace CalibreTools
                 doc.LoadHtml(webIndex);
 
                 HtmlNodeCollection ElementCollection = doc.DocumentNode.SelectNodes(textBoxTocXPath.Text);
-                foreach (HtmlNode item in ElementCollection)
+                if (ElementCollection != null)
                 {
-                    sw.WriteLine(item.InnerText);
-                    string chapterRef = item.Attributes["href"].Value;
-                    int downloaCount = 5;
-                    string chapterContext = "";
-                    do
+                    foreach (HtmlNode item in ElementCollection)
                     {
-                        try
+                        if (!review)
                         {
-                            Thread.Sleep(200);
-                            chapterContext = GetHttpWebRequest(urlBase + chapterRef, encode);
-                            HtmlAgilityPack.HtmlDocument chapterDoc = new HtmlAgilityPack.HtmlDocument();
-                            chapterDoc.LoadHtml(chapterContext);
+                            sw.WriteLine(item.InnerText);
+                            textBoxReview.Text = "正在下载 " + item.InnerText + "...";
+                        }
+                        else
+                        {
+                            textBoxReview.Text = textBoxReview.Text + item.InnerText + "\r\n";
+                        }
 
-                            HtmlNode ChapElement = chapterDoc.DocumentNode.SelectSingleNode(textBoxChapterXPath.Text);
-                            if (ChapElement != null)
+                        string chapterRef = item.Attributes["href"].Value;
+                        int downloaCount = 5;
+                        string chapterContext = "";
+                        do
+                        {
+                            try
                             {
-                                sw.WriteLine(ChapElement.InnerText);
-                                sw.WriteLine();
-                            }
+                                Thread.Sleep(200);
+                                chapterContext = GetHttpWebRequest(urlBase + chapterRef, encode);
+                                HtmlAgilityPack.HtmlDocument chapterDoc = new HtmlAgilityPack.HtmlDocument();
+                                chapterDoc.LoadHtml(chapterContext);
 
+                                HtmlNode ChapElement = chapterDoc.DocumentNode.SelectSingleNode(textBoxChapterXPath.Text);
+                                if (ChapElement != null)
+                                {
+                                    string chapData = ChapElement.InnerText.Replace("&nbsp;", "");
+                                    if (!review)
+                                    {
+                                        sw.WriteLine(chapData);
+                                        sw.WriteLine();
+                                    }
+                                    else
+                                    {
+                                        textBoxReview.Text = textBoxReview.Text + chapData + "\r\n\r\n";
+                                    }
+                                }
+
+                                break;
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(this, "发生异常：" + ex.Message);
+                            }
+                        } while (downloaCount-- > 0);
+
+                        if (review)
+                        {
                             break;
                         }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show(this, "发生异常：" + ex.Message);
-                        }
-                    } while (downloaCount-- > 0);
+                    }
                 }
 
-                sw.Close();
+                result = true;
             }
             catch (Exception ex)
             {
-                textBoxChapter.Text = ex.Message;
+                textBoxReview.Text = "发生异常：" + ex.Message;
+            }
+
+            if (sw != null)
+            {
+                sw.Close();
+            }
+
+            if (fileSteam != null)
+            {
+                fileSteam.Close();
+            }
+
+            return result;
+        }
+        
+        private void buttonReview_Click(object sender, EventArgs e)
+        {
+            if (DownloadArticle(true))
+            {
+                Properties.Settings.Default.baseURL = textBoxBase.Text;
+                Properties.Settings.Default.catalogRelativeURL = textBoxChapter.Text;
+                Properties.Settings.Default.catalogXPath = textBoxTocXPath.Text;
+                Properties.Settings.Default.articleXPath = textBoxChapterXPath.Text;
+                Properties.Settings.Default.saveFilePath = textBoxSavePath.Text;
+                Properties.Settings.Default.articleEncode = comboBoxCodec.SelectedItem.ToString();
+                Properties.Settings.Default.Save();                
             }
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-
+            if (DownloadArticle(false))
+            {
+                Properties.Settings.Default.baseURL = textBoxBase.Text;
+                Properties.Settings.Default.catalogRelativeURL = textBoxChapter.Text;
+                Properties.Settings.Default.catalogXPath = textBoxTocXPath.Text;
+                Properties.Settings.Default.articleXPath = textBoxChapterXPath.Text;
+                Properties.Settings.Default.saveFilePath = textBoxSavePath.Text;
+                Properties.Settings.Default.articleEncode = comboBoxCodec.SelectedItem.ToString();
+                Properties.Settings.Default.Save();
+            }
         }
 
         #endregion
@@ -575,5 +661,6 @@ namespace CalibreTools
         }
 
         #endregion
+
     }
 }
