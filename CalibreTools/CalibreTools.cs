@@ -138,6 +138,7 @@ namespace CalibreTools
             // 获取目录分类
             int catelogId = 0;
             Dictionary<int, string> catalogName = new Dictionary<int, string>();
+            catalogName.Add(-1, "");
 
             string customSQL = "select id from custom_columns where label='catalog'";
             SQLiteCommand customCmd = new SQLiteCommand(customSQL, m_dbConnection);
@@ -162,12 +163,21 @@ namespace CalibreTools
             while (reader.Read())
             {
                 int bookId = Convert.ToInt32(reader["id"]);
+                int bookCatalogId = -1;
+                string catalogSQL = "select value from books_custom_column_{0}_link where book={1}";
+                SQLiteCommand catalogCMD = new SQLiteCommand(string.Format(catalogSQL, catelogId, bookId), m_dbConnection);
+                SQLiteDataReader catalogReader = catalogCMD.ExecuteReader();
+                if (catalogReader.Read())
+                {
+                    bookCatalogId = Convert.ToInt32(catalogReader["value"]);
+                }
+
                 ListViewItem item = new ListViewItem(
                     new string[]
                     {
                         reader["title"] as string,                        
                         reader["path"] as string,
-                        catalogName[bookId]
+                        catalogName[bookCatalogId]
                     });
                 item.Tag = bookId;
                 listViewBooks.Items.Add(item);
