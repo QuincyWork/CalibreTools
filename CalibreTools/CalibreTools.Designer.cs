@@ -34,7 +34,7 @@
             this.buttonRefresh = new System.Windows.Forms.Button();
             this.listViewBooks = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.buttonImportCatalog = new System.Windows.Forms.Button();
             this.buttonRefreshCatalog = new System.Windows.Forms.Button();
@@ -65,6 +65,8 @@
             this.openFileDialogLib = new System.Windows.Forms.OpenFileDialog();
             this.buttonBrowse = new System.Windows.Forms.Button();
             this.folderBrowserDialogLib = new System.Windows.Forms.FolderBrowserDialog();
+            this.buttonSetCatalog = new System.Windows.Forms.Button();
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -85,12 +87,13 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.buttonSetCatalog);
             this.tabPage1.Controls.Add(this.buttonMove);
             this.tabPage1.Controls.Add(this.buttonRefresh);
             this.tabPage1.Controls.Add(this.listViewBooks);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(638, 356);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "库文件";
@@ -122,7 +125,8 @@
             // 
             this.listViewBooks.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
-            this.columnHeader2});
+            this.columnHeader2,
+            this.columnHeader3});
             this.listViewBooks.Dock = System.Windows.Forms.DockStyle.Left;
             this.listViewBooks.FullRowSelect = true;
             this.listViewBooks.Location = new System.Drawing.Point(3, 3);
@@ -135,12 +139,12 @@
             // columnHeader1
             // 
             this.columnHeader1.Text = "标题";
-            this.columnHeader1.Width = 167;
+            this.columnHeader1.Width = 159;
             // 
-            // columnHeader2
+            // columnHeader3
             // 
-            this.columnHeader2.Text = "路径";
-            this.columnHeader2.Width = 359;
+            this.columnHeader3.Text = "目录";
+            this.columnHeader3.Width = 67;
             // 
             // tabPage2
             // 
@@ -151,7 +155,7 @@
             this.tabPage2.Controls.Add(this.treeViewCatalog);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(638, 356);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "用户目录";
@@ -229,7 +233,7 @@
             this.tabPage3.Controls.Add(this.label2);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage3.Size = new System.Drawing.Size(638, 356);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "下载";
@@ -242,7 +246,7 @@
             "utf-8",
             "GB18030"});
             this.comboBoxCodec.Location = new System.Drawing.Point(86, 112);
-            this.comboBoxCodec.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.comboBoxCodec.Margin = new System.Windows.Forms.Padding(2);
             this.comboBoxCodec.Name = "comboBoxCodec";
             this.comboBoxCodec.Size = new System.Drawing.Size(115, 20);
             this.comboBoxCodec.TabIndex = 4;
@@ -250,7 +254,7 @@
             // buttonSave
             // 
             this.buttonSave.Location = new System.Drawing.Point(555, 50);
-            this.buttonSave.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonSave.Margin = new System.Windows.Forms.Padding(2);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(75, 23);
             this.buttonSave.TabIndex = 3;
@@ -261,7 +265,7 @@
             // buttonReview
             // 
             this.buttonReview.Location = new System.Drawing.Point(555, 18);
-            this.buttonReview.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonReview.Margin = new System.Windows.Forms.Padding(2);
             this.buttonReview.Name = "buttonReview";
             this.buttonReview.Size = new System.Drawing.Size(75, 23);
             this.buttonReview.TabIndex = 3;
@@ -272,7 +276,7 @@
             // textBoxReview
             // 
             this.textBoxReview.Location = new System.Drawing.Point(14, 188);
-            this.textBoxReview.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxReview.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxReview.Multiline = true;
             this.textBoxReview.Name = "textBoxReview";
             this.textBoxReview.Size = new System.Drawing.Size(522, 160);
@@ -281,7 +285,7 @@
             // textBoxSavePath
             // 
             this.textBoxSavePath.Location = new System.Drawing.Point(86, 137);
-            this.textBoxSavePath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxSavePath.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxSavePath.Name = "textBoxSavePath";
             this.textBoxSavePath.Size = new System.Drawing.Size(450, 21);
             this.textBoxSavePath.TabIndex = 1;
@@ -309,7 +313,7 @@
             // textBoxChapterXPath
             // 
             this.textBoxChapterXPath.Location = new System.Drawing.Point(86, 86);
-            this.textBoxChapterXPath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxChapterXPath.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxChapterXPath.Name = "textBoxChapterXPath";
             this.textBoxChapterXPath.Size = new System.Drawing.Size(450, 21);
             this.textBoxChapterXPath.TabIndex = 1;
@@ -337,7 +341,7 @@
             // textBoxTocXPath
             // 
             this.textBoxTocXPath.Location = new System.Drawing.Point(86, 60);
-            this.textBoxTocXPath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxTocXPath.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxTocXPath.Name = "textBoxTocXPath";
             this.textBoxTocXPath.Size = new System.Drawing.Size(450, 21);
             this.textBoxTocXPath.TabIndex = 1;
@@ -355,7 +359,7 @@
             // textBoxChapter
             // 
             this.textBoxChapter.Location = new System.Drawing.Point(86, 35);
-            this.textBoxChapter.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxChapter.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxChapter.Name = "textBoxChapter";
             this.textBoxChapter.Size = new System.Drawing.Size(450, 21);
             this.textBoxChapter.TabIndex = 1;
@@ -373,7 +377,7 @@
             // textBoxBase
             // 
             this.textBoxBase.Location = new System.Drawing.Point(86, 8);
-            this.textBoxBase.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxBase.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxBase.Name = "textBoxBase";
             this.textBoxBase.Size = new System.Drawing.Size(450, 21);
             this.textBoxBase.TabIndex = 1;
@@ -438,6 +442,22 @@
             this.buttonBrowse.UseVisualStyleBackColor = true;
             this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
             // 
+            // buttonSetCatalog
+            // 
+            this.buttonSetCatalog.Enabled = false;
+            this.buttonSetCatalog.Location = new System.Drawing.Point(555, 76);
+            this.buttonSetCatalog.Name = "buttonSetCatalog";
+            this.buttonSetCatalog.Size = new System.Drawing.Size(75, 23);
+            this.buttonSetCatalog.TabIndex = 1;
+            this.buttonSetCatalog.Text = "设置目录";
+            this.buttonSetCatalog.UseVisualStyleBackColor = true;
+            this.buttonSetCatalog.Click += new System.EventHandler(this.buttonSetCatalog_Click);
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "路径";
+            this.columnHeader2.Width = 300;
+            // 
             // CalibreTools
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -449,7 +469,8 @@
             this.Controls.Add(this.textBoxPath);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tabControl1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "CalibreTools";
             this.Text = "Calibre工具";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CalibreTools_FormClosing);
@@ -477,7 +498,7 @@
         private System.Windows.Forms.Button buttonMove;
         private System.Windows.Forms.Button buttonRefresh;
         private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.OpenFileDialog openFileDialogLib;
         private System.Windows.Forms.Button buttonBrowse;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogLib;
@@ -503,6 +524,8 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textBoxChapter;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button buttonSetCatalog;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
     }
 }
 

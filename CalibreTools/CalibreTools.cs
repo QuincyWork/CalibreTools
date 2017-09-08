@@ -14,6 +14,7 @@ using System.Net;
 using HtmlAgilityPack;
 using System.Threading;
 using System.Configuration;
+using System.Text.RegularExpressions;
 
 namespace CalibreTools
 {
@@ -77,17 +78,20 @@ namespace CalibreTools
             {
                 string sql = "DROP TRIGGER books_update_trg;";
                 SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
-                command.ExecuteNonQuery();
-                buttonRefresh.Enabled = true;
-                buttonMove.Enabled = true;
-                buttonAddCatalog.Enabled = true;
-                buttonEditCatalog.Enabled = true;
-                buttonRefreshCatalog.Enabled = true;
-                buttonImportCatalog.Enabled = true;
+                command.ExecuteNonQuery();                
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                MessageBox.Show(this, "发生异常: " + ex.Message);
             }
+
+            buttonRefresh.Enabled = true;
+            buttonMove.Enabled = true;
+            buttonSetCatalog.Enabled = true;
+            buttonAddCatalog.Enabled = true;
+            buttonEditCatalog.Enabled = true;
+            buttonRefreshCatalog.Enabled = true;
+            buttonImportCatalog.Enabled = true;
 
             m_strCalibreRoot = Path.GetDirectoryName(textBoxPath.Text);
 
@@ -107,13 +111,6 @@ namespace CalibreTools
                     "END";
                     SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
                     command.ExecuteNonQuery();
-
-                    buttonRefresh.Enabled = false;
-                    buttonMove.Enabled = false;
-                    buttonAddCatalog.Enabled = false;
-                    buttonEditCatalog.Enabled = false;
-                    buttonRefreshCatalog.Enabled = false;
-                    buttonImportCatalog.Enabled = false;
                 }
                 catch (Exception)
                 {
@@ -121,6 +118,14 @@ namespace CalibreTools
 
                 m_dbConnection.Close();
                 m_dbConnection = null;
+
+                buttonRefresh.Enabled = false;
+                buttonMove.Enabled = false;
+                buttonSetCatalog.Enabled = false;
+                buttonAddCatalog.Enabled = false;
+                buttonEditCatalog.Enabled = false;
+                buttonRefreshCatalog.Enabled = false;
+                buttonImportCatalog.Enabled = false;
 
                 MessageBox.Show(this,"关闭操作成功");
             }
@@ -130,18 +135,41 @@ namespace CalibreTools
         {
             listViewBooks.Items.Clear();
 
+            // 获取目录分类
+            int catelogId = 0;
+            Dictionary<int, string> catalogName = new Dictionary<int, string>();
+
+            string customSQL = "select id from custom_columns where label='catalog'";
+            SQLiteCommand customCmd = new SQLiteCommand(customSQL, m_dbConnection);
+            SQLiteDataReader customReader = customCmd.ExecuteReader();
+            if (customReader.Read())
+            {
+                catelogId = Convert.ToInt32(customReader["id"]);
+            }
+
+            customSQL = "select id,value from custom_column_{0}";
+            customCmd = new SQLiteCommand(string.Format(customSQL, catelogId), m_dbConnection);
+            customReader = customCmd.ExecuteReader();
+            while (customReader.Read())
+            {
+                catalogName.Add(Convert.ToInt32(customReader["id"]), customReader["value"] as string);
+            }
+
+            // 获取图书
             string sql = "select id,title,path from books";
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
+                int bookId = Convert.ToInt32(reader["id"]);
                 ListViewItem item = new ListViewItem(
                     new string[]
                     {
-                        reader["title"] as string,
-                        reader["path"] as string
+                        reader["title"] as string,                        
+                        reader["path"] as string,
+                        catalogName[bookId]
                     });
-                item.Tag = reader["id"];
+                item.Tag = bookId;
                 listViewBooks.Items.Add(item);
             }
         }
@@ -182,6 +210,10 @@ namespace CalibreTools
                         string sql = "update books set path='{0}' where id={1}";
                         // 使用中文名代替拼音
                         string title = item.SubItems[0].Text;
+                        // 替换不能创建目录的特殊字符
+                        title = title.TrimStart('.');
+                        title = Regex.Replace(title, "[\\/:*?*<>|]", string.Empty, RegexOptions.Compiled);                        
+
                         string parentFolder = "/" + title;
                         string newPath = newPathValue + parentFolder;
                         if (Directory.Exists(strMoveFolder + parentFolder))
@@ -223,6 +255,7 @@ namespace CalibreTools
                                 continue;
                             }
 
+                            // 更新名称
                             if (string.Compare(dataName, title, true) != 0)
                             {
                                 string sourceFile = strMoveFolder + parentFolder + "/" + dataName + "." + dataFormat;
@@ -242,6 +275,96 @@ namespace CalibreTools
                 }
             }
         }
+
+        private void buttonSetCatalog_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string strCatalogValue = "";
+                if (listViewBooks.SelectedItems.Count > 0)
+                {
+                    SetFileCatalog dlg = new SetFileCatalog();
+                    dlg.SetCatalogTree(treeViewCatalog.Nodes);
+                    DialogResult result = dlg.ShowDialog();
+                    if (result == DialogResult.OK)
+                    {
+                        strCatalogValue = dlg.SelectedCatalog;
+                    }
+                }
+
+                // 设置catalog目录
+                if (!string.IsNullOrEmpty(strCatalogValue))
+                {
+                    // 判断是否有catalog自定义值
+                    int customId = 0;
+                    string customSQL = "select id from custom_columns where label='catalog'";
+                    SQLiteCommand customCmd = new SQLiteCommand(customSQL, m_dbConnection);
+                    SQLiteDataReader customReader = customCmd.ExecuteReader();
+                    if (customReader.Read())
+                    {
+                        customId = Convert.ToInt32(customReader["id"]);
+                    }
+                    else
+                    {
+                        MessageBox.Show(this, "请先在Calibre中添加自定义栏目'catalog'");
+                        return;
+                    }
+
+                    if (customId != 0)
+                    {
+                        int catalogId = 0;
+                        customSQL = "select id from custom_column_{0} where value='{1}'";
+                        customCmd = new SQLiteCommand(string.Format(customSQL, customId, strCatalogValue), m_dbConnection);
+                        customReader = customCmd.ExecuteReader();
+                        if (customReader.Read())
+                        {
+                            catalogId = Convert.ToInt32(customReader["id"]);
+                        }
+                        else
+                        {
+                            string customInsertSQL = "insert into custom_column_{0} (value) values ('{1}')";
+                            SQLiteCommand customInsertCmd = new SQLiteCommand(string.Format(customInsertSQL, customId, strCatalogValue), m_dbConnection);
+                            customInsertCmd.ExecuteNonQuery();
+                            customCmd.Reset();
+                            customReader = customCmd.ExecuteReader();
+                            if (customReader.Read())
+                            {
+                                catalogId = Convert.ToInt32(customReader["id"]);
+                            }
+                        }
+
+                        // 更新图书的catalog标记
+                        if (catalogId != 0)
+                        {
+                            foreach (ListViewItem item in listViewBooks.SelectedItems)
+                            {
+                                if (string.IsNullOrEmpty(item.SubItems[2].Text))
+                                {
+                                    string linkInsertSQL = "insert into books_custom_column_{0}_link (book,value) values ({1},{2})";
+                                    SQLiteCommand linkInsertCmd = new SQLiteCommand(
+                                        string.Format(linkInsertSQL, customId, item.Tag, catalogId), m_dbConnection);
+                                    linkInsertCmd.ExecuteNonQuery();
+                                }
+                                else
+                                {                                    
+                                    string linkUpdateSQL = "update books_custom_column_{0}_link set value={2} where book ={1}";
+                                    SQLiteCommand linkUpdateCmd = new SQLiteCommand(
+                                        string.Format(linkUpdateSQL, customId, item.Tag, catalogId), m_dbConnection);
+                                    linkUpdateCmd.ExecuteNonQuery();
+                                }
+
+                                item.SubItems[2].Text = strCatalogValue;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, "发生异常，" + ex.Message);
+            }
+        }
+
         #endregion
 
         #region 用户目录
