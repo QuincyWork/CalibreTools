@@ -604,126 +604,143 @@ namespace CalibreTools
 
         private bool DownloadArticle(bool review)
         {
-            FileStream fileSteam = null;
-            StreamWriter sw = null;
             bool result = false;
-            try
+            textBoxReview.Text = "";
+
+            Thread thread = new Thread(new ThreadStart(() =>
             {
-                textBoxReview.Text = "";
+                FileStream fileSteam = null;
+                StreamWriter sw = null;
+                
+                try
+                {                    
+                    Encoding encode = Encoding.GetEncoding(comboBoxCodec.Text);
+                    fileSteam = new FileStream(textBoxSavePath.Text, FileMode.Append);
+                    sw = new StreamWriter(fileSteam, encode);
 
-                Encoding encode = Encoding.GetEncoding(comboBoxCodec.Text);
-                fileSteam = new FileStream(textBoxSavePath.Text, FileMode.Append);
-                sw = new StreamWriter(fileSteam, encode);
+                    string urlBase = textBoxBase.Text;
+                    string urlChapter = urlBase + textBoxChapter.Text;
+                    string webIndex = GetHttpWebRequest(urlChapter, encode);
+                    HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                    doc.LoadHtml(webIndex);
 
-                string urlBase = textBoxBase.Text;
-                string urlChapter = urlBase + textBoxChapter.Text;
-                string webIndex = GetHttpWebRequest(urlChapter, encode);
-                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-                doc.LoadHtml(webIndex);
-
-                HtmlNodeCollection ElementCollection = doc.DocumentNode.SelectNodes(textBoxTocXPath.Text);
-                if (ElementCollection != null)
-                {
-                    foreach (HtmlNode item in ElementCollection)
+                    HtmlNodeCollection ElementCollection = doc.DocumentNode.SelectNodes(textBoxTocXPath.Text);
+                    if (ElementCollection != null)
                     {
-                        if (!review)
+                        foreach (HtmlNode item in ElementCollection)
                         {
-                            sw.WriteLine(item.InnerText);
-                            textBoxReview.Text = "正在下载 " + item.InnerText + "...";
-                        }
-                        else
-                        {
-                            textBoxReview.Text = textBoxReview.Text + item.InnerText + "\r\n";
-                        }
-
-                        string chapterRef = item.Attributes["href"].Value;
-                        int downloaCount = 5;
-                        string chapterContext = "";
-                        do
-                        {
-                            try
+                            if (!review)
                             {
-                                Thread.Sleep(200);
-                                chapterContext = GetHttpWebRequest(urlBase + chapterRef, encode);
-                                HtmlAgilityPack.HtmlDocument chapterDoc = new HtmlAgilityPack.HtmlDocument();
-                                chapterDoc.LoadHtml(chapterContext);
-
-                                HtmlNode ChapElement = chapterDoc.DocumentNode.SelectSingleNode(textBoxChapterXPath.Text);
-                                if (ChapElement != null)
+                                sw.WriteLine(item.InnerText);
+                                textBoxReview.Invoke(new Action(delegate
                                 {
-                                    string chapData = ChapElement.InnerText.Replace("&nbsp;", "");
-                                    if (!review)
-                                    {
-                                        sw.WriteLine(chapData);
-                                        sw.WriteLine();
-                                    }
-                                    else
-                                    {
-                                        textBoxReview.Text = textBoxReview.Text + chapData + "\r\n\r\n";
-                                    }
-                                }
+                                    textBoxReview.Text = "正在下载 " + item.InnerText + "...";
+                                }));                                
+                            }
+                            else
+                            {
+                                textBoxReview.Invoke(new Action(delegate
+                                {
+                                    textBoxReview.Text = textBoxReview.Text + item.InnerText + "\r\n";
+                                }));                                
+                            }
 
+                            string chapterRef = item.Attributes["href"].Value;
+                            int downloaCount = 5;
+                            string chapterContext = "";
+                            do
+                            {
+                                try
+                                {
+                                    Thread.Sleep(200);
+                                    chapterContext = GetHttpWebRequest(urlBase + chapterRef, encode);
+                                    HtmlAgilityPack.HtmlDocument chapterDoc = new HtmlAgilityPack.HtmlDocument();
+                                    chapterDoc.LoadHtml(chapterContext);
+
+                                    HtmlNode ChapElement = chapterDoc.DocumentNode.SelectSingleNode(textBoxChapterXPath.Text);
+                                    if (ChapElement != null)
+                                    {
+                                        string chapData = ChapElement.InnerText.Replace("&nbsp;", "");
+                                        if (!review)
+                                        {
+                                            sw.WriteLine(chapData);
+                                            sw.WriteLine();
+                                        }
+                                        else
+                                        {
+                                            textBoxReview.Invoke(new Action(delegate
+                                            {
+                                                textBoxReview.Text = textBoxReview.Text + chapData + "\r\n\r\n";
+                                            })); 
+                                            
+                                        }
+                                    }
+
+                                    break;
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show(this, "发生异常：" + ex.Message);
+                                }
+                            } while (downloaCount-- > 0);
+
+                            if (review)
+                            {
                                 break;
                             }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show(this, "发生异常：" + ex.Message);
-                            }
-                        } while (downloaCount-- > 0);
-
-                        if (review)
-                        {
-                            break;
                         }
                     }
+
+                    result = true;
+                }
+                catch (Exception ex)
+                {
+                    textBoxReview.Invoke(new Action(delegate
+                    {
+                        textBoxReview.Text = "发生异常：" + ex.Message;
+                    }));                     
                 }
 
-                result = true;
-            }
-            catch (Exception ex)
-            {
-                textBoxReview.Text = "发生异常：" + ex.Message;
-            }
+                if (sw != null)
+                {
+                    sw.Close();
+                }
 
-            if (sw != null)
-            {
-                sw.Close();
-            }
+                if (fileSteam != null)
+                {
+                    fileSteam.Close();
+                }
 
-            if (fileSteam != null)
-            {
-                fileSteam.Close();
-            }
+                if (result)
+                {
+                    textBoxReview.Invoke(new Action(delegate
+                    {
+                        textBoxReview.Text = "下载完成";
+                    }));
+                    
+                    Properties.Settings.Default.baseURL = textBoxBase.Text;
+                    Properties.Settings.Default.catalogRelativeURL = textBoxChapter.Text;
+                    Properties.Settings.Default.catalogXPath = textBoxTocXPath.Text;
+                    Properties.Settings.Default.articleXPath = textBoxChapterXPath.Text;
+                    Properties.Settings.Default.saveFilePath = textBoxSavePath.Text;
+                    Properties.Settings.Default.articleEncode = comboBoxCodec.SelectedItem.ToString();
+                    Properties.Settings.Default.Save();
+                }
+            }));
+
+            thread.Start();
 
             return result;
         }
         
         private void buttonReview_Click(object sender, EventArgs e)
         {
-            if (DownloadArticle(true))
-            {
-                Properties.Settings.Default.baseURL = textBoxBase.Text;
-                Properties.Settings.Default.catalogRelativeURL = textBoxChapter.Text;
-                Properties.Settings.Default.catalogXPath = textBoxTocXPath.Text;
-                Properties.Settings.Default.articleXPath = textBoxChapterXPath.Text;
-                Properties.Settings.Default.saveFilePath = textBoxSavePath.Text;
-                Properties.Settings.Default.articleEncode = comboBoxCodec.SelectedItem.ToString();
-                Properties.Settings.Default.Save();                
-            }
+            DownloadArticle(true);
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            if (DownloadArticle(false))
-            {
-                Properties.Settings.Default.baseURL = textBoxBase.Text;
-                Properties.Settings.Default.catalogRelativeURL = textBoxChapter.Text;
-                Properties.Settings.Default.catalogXPath = textBoxTocXPath.Text;
-                Properties.Settings.Default.articleXPath = textBoxChapterXPath.Text;
-                Properties.Settings.Default.saveFilePath = textBoxSavePath.Text;
-                Properties.Settings.Default.articleEncode = comboBoxCodec.SelectedItem.ToString();
-                Properties.Settings.Default.Save();
-            }
+            DownloadArticle(false);            
         }
 
         #endregion
