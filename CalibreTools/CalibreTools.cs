@@ -606,25 +606,29 @@ namespace CalibreTools
         {
             bool result = false;
             textBoxReview.Text = "";
+            
+            string strCodec = comboBoxCodec.Text;
+            string strSavePath = textBoxSavePath.Text;
+            string strBoxTocXPath = textBoxTocXPath.Text;
+            string strBoxChapterXPath = textBoxChapterXPath.Text;
 
             Thread thread = new Thread(new ThreadStart(() =>
             {
                 FileStream fileSteam = null;
                 StreamWriter sw = null;
+                Encoding encode = Encoding.GetEncoding(strCodec);
+                fileSteam = new FileStream(strSavePath, FileMode.Append);
+                sw = new StreamWriter(fileSteam, encode);
                 
                 try
                 {                    
-                    Encoding encode = Encoding.GetEncoding(comboBoxCodec.Text);
-                    fileSteam = new FileStream(textBoxSavePath.Text, FileMode.Append);
-                    sw = new StreamWriter(fileSteam, encode);
-
                     string urlBase = textBoxBase.Text;
                     string urlChapter = urlBase + textBoxChapter.Text;
                     string webIndex = GetHttpWebRequest(urlChapter, encode);
                     HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                     doc.LoadHtml(webIndex);
 
-                    HtmlNodeCollection ElementCollection = doc.DocumentNode.SelectNodes(textBoxTocXPath.Text);
+                    HtmlNodeCollection ElementCollection = doc.DocumentNode.SelectNodes(strBoxTocXPath);
                     if (ElementCollection != null)
                     {
                         foreach (HtmlNode item in ElementCollection)
@@ -646,6 +650,11 @@ namespace CalibreTools
                             }
 
                             string chapterRef = item.Attributes["href"].Value;
+                            if (string.IsNullOrEmpty(chapterRef))
+                            {
+                                continue;
+                            }
+
                             int downloaCount = 5;
                             string chapterContext = "";
                             do
@@ -657,7 +666,7 @@ namespace CalibreTools
                                     HtmlAgilityPack.HtmlDocument chapterDoc = new HtmlAgilityPack.HtmlDocument();
                                     chapterDoc.LoadHtml(chapterContext);
 
-                                    HtmlNode ChapElement = chapterDoc.DocumentNode.SelectSingleNode(textBoxChapterXPath.Text);
+                                    HtmlNode ChapElement = chapterDoc.DocumentNode.SelectSingleNode(strBoxChapterXPath);
                                     if (ChapElement != null)
                                     {
                                         string chapData = ChapElement.InnerText.Replace("&nbsp;", "");
@@ -711,7 +720,7 @@ namespace CalibreTools
                     fileSteam.Close();
                 }
 
-                if (result)
+                if (!review && result)
                 {
                     textBoxReview.Invoke(new Action(delegate
                     {
@@ -720,10 +729,10 @@ namespace CalibreTools
                     
                     Properties.Settings.Default.baseURL = textBoxBase.Text;
                     Properties.Settings.Default.catalogRelativeURL = textBoxChapter.Text;
-                    Properties.Settings.Default.catalogXPath = textBoxTocXPath.Text;
-                    Properties.Settings.Default.articleXPath = textBoxChapterXPath.Text;
-                    Properties.Settings.Default.saveFilePath = textBoxSavePath.Text;
-                    Properties.Settings.Default.articleEncode = comboBoxCodec.SelectedItem.ToString();
+                    Properties.Settings.Default.catalogXPath = strBoxTocXPath;
+                    Properties.Settings.Default.articleXPath = strBoxChapterXPath;
+                    Properties.Settings.Default.saveFilePath = strSavePath;
+                    Properties.Settings.Default.articleEncode = strCodec;
                     Properties.Settings.Default.Save();
                 }
             }));
